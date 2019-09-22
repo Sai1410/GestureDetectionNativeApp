@@ -2,6 +2,7 @@ package com.example.nativeapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
         WebView webView = (WebView)findViewById(R.id.webView);
         webView = (WebView) findViewById(R.id.webView);

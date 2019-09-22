@@ -18,13 +18,14 @@ function cameraOnly (mode) {
     }
     
     // find contours on img
-	cv.findContours(temp, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+	cv.findContours(temp, contours, hierarchy, cv.RETR_CCOMP, cv.CHAIN_APPROX_SIMPLE);
 
-    let max_idx = getIndexOfLargestContour(contours);
+    let [max_idx, hole_contour_idx]  = getIndexOfLargestContour(contours);
 
     //Draw
     if(mode === "LargestContour"){
         cv.drawContours(dst, contours, max_idx, color, 1, cv.LINE_8, hierarchy, 100);
+        cv.drawContours(dst, contours, hole_contour_idx, color, 1, cv.LINE_8, hierarchy, 100);
         return dst
     }
     
@@ -69,44 +70,18 @@ function cameraOnly (mode) {
         }
 
         // detect fingertips
-        detectFingerTips(cnt, hull, rect, defect, tipPoints);
-
+        detectFingerTips(cnt, hull, rect, defect, tipPoints, hole_contour_idx);
         //Draw
         if(mode === "FingerTips"){
             for(let i = 0; i < tipPoints.length ; i++){
                 cv.circle(dst, tipPoints[i], 3, color, -1)
-            }
-            return dst
-        }
-
-                
-        if(tipPoints.length > 3){
-            
-            // Get thumb and pointing finger
-            getThumbAndPointer(video, tipPoints);
-            
-            //Draw
-            if(mode === "ThumbAndPointer"){
-                cv.circle(dst, thumb, 3, color, -1)
-                cv.circle(dst, pointer, 3, color, -1)
-    
-                return dst
-            }
-            
-            // DetectGrabbing
-            grabState = detectGrabbing(tipPoints, pointer, thumb);
-
-            //Draw
-            if(mode === "CameraOnly"){
-                if(grabState){
-                    cv.circle(dst, thumb, 3, color, -1)
-                    cv.circle(dst, pointer, 3, color, -1)
-                }
-        
-                return dst
+                cv.line(dst, tipPoints[i], center, [255, 0, 0, 255])
             }
         }
-        
+
+        grabState = detectGrabbing(hole_contour_idx);
+        document.getElementById("detectedFingerTips").innerHTML = `Detected Finger Tips: ${fingerAmount}`
+        document.getElementById("detectedGrabbing").innerHTML = `Detected Grabbing: ${grabState ? grabState : false}`
     }
     return dst
 }
