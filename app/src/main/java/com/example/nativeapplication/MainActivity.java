@@ -1,11 +1,12 @@
 package com.example.nativeapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.SurfaceView;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -19,6 +20,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean              mIsColorSelected = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.ACCESS_NETWORK_STATE},
+                1);
+
         Log.i(TAG, "called onCreate");
 
         super.onCreate(savedInstanceState);
